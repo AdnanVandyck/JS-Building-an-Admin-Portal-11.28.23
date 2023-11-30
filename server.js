@@ -28,6 +28,7 @@ async function main() {
         res.json(book)
     })
 
+
     app.post('/addBook', async (req, res) => {
         let books = await loadBooks()
         if (!req.body.title) return res.status(400).json({ error: true, message: `'title' is required in the request body when calling 'addBook'. Make sure you're stringifying the body of your request, and sending the appropriate headers.` })

@@ -1,7 +1,7 @@
 document.addEventListener('DOMContentLoaded', getBookList);
 
 function getBookList() {
-    // Change the URL to the actual endpoint of your server
+
     fetch('http://localhost:3001/listBooks')
         .then(response => response.json())
         .then(data => displayBookList(data))
@@ -12,16 +12,16 @@ function displayBookList(books) {
     const bookListElement = document.getElementById('bookList');
     const form = document.getElementById('bookForm');
 
-    // Clear existing content
+
     bookListElement.innerHTML = '';
 
-    // Display each book in the list with an input field for quantity
+
     books.forEach(book => {
         const listItem = document.createElement('li');
         const inputField = document.createElement('input');
         const updateButton = document.createElement('button');
 
-        listItem.textContent = `${book.title} - Quantity: `;
+        listItem.textContent = `${book.title}`;
         inputField.type = 'number';
         inputField.value = book.quantity;
         inputField.name = `book_${book.id}`;
@@ -35,18 +35,39 @@ function displayBookList(books) {
         bookListElement.appendChild(listItem);
     });
 
-        // Prevent the form from submitting and handle the update in JavaScript
         form.addEventListener('submit', (event) => {
             event.preventDefault();
             updateQuantities();
         });
 }
 
-function updateQuantity(bookID, newQuantity) {
-    // Implement the logic to update a single book's quantity
-    console.log(`Updating quantity for Book ${book.id} to ${newQuantity}`);
+function updateQuantity(bookId, newQuantity) {
+
+    console.log(`Updating quantity for Book ${bookId} to ${newQuantity}`);
 }
+
+
 function updateQuantities() {
-    // Implement the logic to update quantities for all books
-    console.log('Updating quantities for all books');
+    const form = document.getElementById('bookForm');
+
+    const updatedQuantities = {};
+    const formData = new FormData(form);
+    formData.forEach((value, key) => {
+        updatedQuantities[key] = value;
+    });
+
+    fetch('http://localhost:3001/updateBook', {
+        method: 'PATCH',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(updatedQuantities),
+    })
+    .then(response => response.json())
+    .then(data => {
+        displayBookList(data.books);
+    })
+    .catch(error => {
+        console.error('Error:', error);
+    });
 }
